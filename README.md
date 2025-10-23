@@ -1,7 +1,3 @@
-
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SiamFS/TraditionalML_Tabular_Classification/blob/main/TraditionalML_tabular_classification.ipynb)
-
 Traditional ML Tabular Classification
 
 **Research Summary: Transparent, Dual-Evaluation of Classical ML Models on Real Student Performance Data**
