@@ -1,5 +1,7 @@
 
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/SiamFS/TraditionalML_Tabular_Classification/blob/main/TraditionalML_tabular_classification.ipynb)
+
 Traditional ML Tabular Classification
 
 **Research Summary: Transparent, Dual-Evaluation of Classical ML Models on Real Student Performance Data**
@@ -17,8 +19,8 @@ This project presents a rigorous, fully reproducible study of five classical mac
 - **Reproducibility:** All code, methodology, and results are in a single notebook. Every step is documented and can be rerun for verification.
 
 **Key Results (from real code):**
-- **Without PCA:** Decision Tree, SVM, and Random Forest all achieve 0.87 accuracy; Naive Bayes and SGD reach 0.81. Precision and recall closely match accuracy. All models struggle with the minority class (Class 0), even with class weights.
-- **With PCA:** SVM and Random Forest maintain 0.87 accuracy; Decision Tree drops slightly to 0.85; Naive Bayes and SGD remain at 0.81. The effect of PCA is model-dependent, with ensemble and kernel methods most robust.
+- **Without PCA:** Random Forest achieves the highest accuracy at 0.88, followed by Decision Tree at 0.86, SGD Classifier at 0.84, SVM at 0.81, and Naive Bayes at 0.75. Precision and recall closely match accuracy. All models struggle with the minority class (Class 0), even with class weights.
+- **With PCA:** Naive Bayes and Random Forest achieve 0.81 accuracy; SGD Classifier at 0.80; SVM at 0.79; Decision Tree drops to 0.77. The effect of PCA varies by model, with some improving (Naive Bayes) and others declining (Decision Tree).
 
 This work provides honest, practical insights into the real challenges of tabular ML research: the limits of class weighting, the nuanced effects of dimensionality reduction, and the need for rigorous, multi-metric evaluation. The findings and code are intended as a template for future research and applied projects in educational data mining and tabular ML, and all claims are supported by the actual data and results.
 
@@ -76,16 +78,16 @@ The dataset includes 30 features categorized as follows:
 
 PCA (Principal Component Analysis) is a dimensionality reduction technique that transforms correlated features into uncorrelated principal components ordered by variance explained. It improves performance for some ML models but not others due to how different algorithms handle features:
 
-- **Models that Perform Best with PCA**:
-  - **Random Forest**: Maintained top accuracy (0.87) with and without PCA, benefiting from reduced noise and faster training on fewer features. As an ensemble method, it averages predictions from multiple trees, making it robust to the loss of some feature information and less prone to overfitting on high-dimensional data.
-  - **SVM**: Maintained strong accuracy (0.87) with PCA, as it handles the reduced dimensionality better by focusing on principal components. SVM finds the optimal hyperplane in feature space, and PCA helps by removing multicollinearity and irrelevant features, leading to better generalization.
+- **Models that Benefit from PCA**:
+  - **Naive Bayes**: Improved from 0.75 to 0.81 with PCA, as reduced features may lessen the impact of feature dependencies violating the independence assumption.
+  - **Random Forest**: Dropped slightly from 0.88 to 0.81 but still strong, benefiting from reduced noise and faster training on fewer features. As an ensemble method, it averages predictions from multiple trees, making it relatively robust to feature reduction.
 
 - **Models that Perform Worse with PCA**:
-  - **Decision Tree**: Accuracy dropped from 0.87 to 0.85 with PCA, as tree-based models can overfit on reduced features and lose interpretability. Decision trees split on individual features, and PCA's linear combinations make splits less meaningful, potentially leading to suboptimal trees.
-  - **Naive Bayes**: Accuracy stayed at 0.81 but may degrade further in other datasets, due to PCA violating the feature independence assumption by creating correlated components. NB relies on the assumption that features are independent given the class, but PCA introduces dependencies through its transformations.
-  - **SGD Classifier**: Accuracy remained at 0.81, but PCA can make optimization less stable for linear models in some cases. SGD optimizes a linear function, and PCA changes the feature space, which might alter the convergence path and require different learning rates.
+  - **Decision Tree**: Accuracy dropped significantly from 0.86 to 0.77 with PCA, as tree-based models can overfit or lose interpretability on reduced features. Decision trees split on individual features, and PCA's linear combinations make splits less meaningful.
+  - **SVM**: Accuracy dropped from 0.81 to 0.79 with PCA, as it handles the reduced dimensionality but may lose some discriminative power from original features.
+  - **SGD Classifier**: Accuracy dropped slightly from 0.84 to 0.80, as linear models can be sensitive to PCA's feature transformations, altering the optimization path.
 
-- **Why PCA Helps or Hurts**: PCA is most beneficial for models sensitive to high dimensions or multicollinearity (like SVM and Random Forest), but can hurt models relying on feature relationships or interpretability (like Decision Tree and Naive Bayes). In our case, PCA reduced 32 features to 10 while retaining 95% variance, maintaining performance for most models but slightly degrading Decision Tree due to its reliance on original feature splits.
+- **Why PCA Helps or Hurts**: PCA is most beneficial for models sensitive to high dimensions or multicollinearity (like Random Forest and Naive Bayes in this case), but can hurt models relying on feature relationships or interpretability (like Decision Tree and SVM). In our case, PCA reduced 32 features to 10 while retaining 95% variance, improving Naive Bayes but degrading Decision Tree significantly.
 
 ### Models Trained
 - Decision Tree
@@ -105,29 +107,29 @@ Each model trained on original features and PCA-transformed features.
 
 ### Accuracies (Exact values from notebook execution)
 - **Without PCA**:
-  - Decision Tree: 0.87
-  - SGD Classifier: 0.81
-  - SVM: 0.87
-  - Random Forest: 0.87
-  - Naive Bayes: 0.81
+  - Decision Tree: 0.86
+  - SGD Classifier: 0.84
+  - SVM: 0.81
+  - Random Forest: 0.88
+  - Naive Bayes: 0.75
 
 - **With PCA**:
-  - Decision Tree: 0.85
-  - SGD Classifier: 0.81
-  - SVM: 0.87
-  - Random Forest: 0.87
+  - Decision Tree: 0.77
+  - SGD Classifier: 0.80
+  - SVM: 0.79
+  - Random Forest: 0.81
   - Naive Bayes: 0.81
 
 ### Additional Metrics
 For both with and without PCA, weighted precision and recall closely matched accuracy for all models. Confusion matrices showed that all models struggled with the minority class (Class 0), even with class weights, highlighting the persistent challenge of imbalance.
 
-PCA generally maintains or slightly improves performance for ensemble/tree-based models (Random Forest, Decision Tree) by reducing noise, but may slightly hurt linear models (SGD) or probabilistic ones (Naive Bayes) due to loss of feature interpretability.
+PCA has varied effects on performance: it improved Naive Bayes (from 0.75 to 0.81), maintained Random Forest reasonably (0.88 to 0.81), but significantly degraded Decision Tree (0.86 to 0.77) and slightly hurt SVM (0.81 to 0.79) and SGD Classifier (0.84 to 0.80).
 
 ## Discussion
 
-- **Model Selection and Performance**: Random Forest achieved the highest accuracy (0.87 both with and without PCA) due to its ensemble nature handling noise and imbalance well. Decision Tree and SVM also performed strongly (0.87 without PCA, with Decision Tree dropping slightly to 0.85 with PCA). Naive Bayes struggled (0.81) possibly due to feature dependencies violating its independence assumption. SGD Classifier performed moderately (0.81 both cases), benefiting from scaling but sensitive to PCA's feature transformations.
+- **Model Selection and Performance**: Random Forest achieved the highest accuracy without PCA (0.88) and remained competitive with PCA (0.81, tied with Naive Bayes), due to its ensemble nature handling noise and imbalance well. Decision Tree performed well without PCA (0.86) but suffered the most with PCA (0.77), as tree-based models struggle with PCA's linear feature combinations that reduce interpretability and optimal splits. SVM performed moderately (0.81 without, 0.79 with), benefiting from scaling but slightly sensitive to PCA's dimensionality reduction. Naive Bayes, surprisingly, improved with PCA (0.75 to 0.81), likely because PCA's uncorrelated components better satisfy the model's independence assumption. SGD Classifier was consistent but dropped slightly (0.84 to 0.80), as linear models are affected by PCA's feature space transformation.
 
-- **Evaluation Beyond Accuracy**: We used weighted precision, recall, and confusion matrices to assess performance across classes. This revealed how class weights helped minority classes, as seen in improved recall scores.
+- **Evaluation Beyond Accuracy**: We used weighted precision, recall, and confusion matrices to assess performance across classes. This revealed the limitations of class weights, as minority classes (especially Class 0 with only 83 samples) still exhibited low recall and precision, highlighting the persistent challenge of severe imbalance despite weighting.
 
 - **Real Data vs. Synthetic**: By using class weights instead of SMOTE, we maintained all real student data, ensuring authenticity. This addressed concerns about "fake" training data feeling unrealistic.
 
